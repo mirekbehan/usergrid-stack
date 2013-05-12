@@ -56,8 +56,6 @@ import org.usergrid.management.ManagementService;
 import org.usergrid.management.UserInfo;
 import org.usergrid.mq.QueueManagerFactory;
 import org.usergrid.persistence.EntityManagerFactory;
-import org.usergrid.persistence.cassandra.EntityManagerFactoryImpl;
-import org.usergrid.persistence.cassandra.Setup;
 import org.usergrid.rest.SwaggerServlet;
 import org.usergrid.rest.filters.ContentTypeFilter;
 import org.usergrid.services.ServiceManagerFactory;
@@ -72,7 +70,6 @@ import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
 public class Server implements ApplicationContextAware {
 
     public static final boolean INSTALL_JSP_SERVLETS = true;
-
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
     public static Server instance = null;
@@ -81,6 +78,7 @@ public class Server implements ApplicationContextAware {
 
     boolean initializeDatabaseOnStart = false;
     boolean startDatabaseWithServer = false;
+    boolean startWebServer = false;
 
     HttpServer httpServer;
     ServletHandler handler;
@@ -129,6 +127,8 @@ public class Server implements ApplicationContextAware {
         startDatabaseWithServer = line.hasOption("db");
         initializeDatabaseOnStart = line.hasOption("init");
 
+        startWebServer					= line.hasOption("web");
+
         if (line.hasOption("port")) {
             try {
                 port = ((Number) line.getParsedOptionValue("port")).intValue();
@@ -145,6 +145,8 @@ public class Server implements ApplicationContextAware {
         if (startDatabaseWithServer) {
             startCassandra();
         }
+        
+        if (startWebServer) {
 
         httpServer = HttpServer.createSimpleServer(".", port);
 
@@ -215,6 +217,7 @@ public class Server implements ApplicationContextAware {
             httpServer.start();
         } catch (IOException e) {
             e.printStackTrace();
+        }
         }
 
         if (daemon) {
