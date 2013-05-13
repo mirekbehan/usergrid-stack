@@ -2,8 +2,15 @@ package org.usergrid.rest;
 
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ServerEnvironmentProperties {
 
+	private static final Logger logger = LoggerFactory
+	            .getLogger(ServerEnvironmentProperties.class);
+
+	
   public static final String API_BASE = "swagger.basepath";
 
   public static final String RECAPTCHA_PUBLIC = "usergrid.recaptcha.public";
@@ -11,10 +18,11 @@ public class ServerEnvironmentProperties {
 
   public static final String REDIRECT_ROOT = "usergrid.redirect_root";
 
-  private Properties properties;
+  private final Properties properties;
 
   public ServerEnvironmentProperties(Properties properties) {
     this.properties = properties;
+    logger.info(properties.toString());
   }
 
   public String getProperty(String key) {
